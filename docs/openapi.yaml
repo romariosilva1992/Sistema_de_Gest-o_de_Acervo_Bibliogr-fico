@@ -244,14 +244,17 @@ components:
         title:
           type: string
           minLength: 1
+          maxLength: 200
           example: O Hobbit
         author:
           type: string
           minLength: 1
+          maxLength: 200
           example: J. R. R. Tolkien
         isbn:
           type: string
           minLength: 1
+          maxLength: 20
           example: 978-8595084742
 
     UpdateBookInput:
@@ -260,12 +263,15 @@ components:
       properties:
         title:
           type: string
+          maxLength: 200
           example: O Senhor dos Anéis
         author:
           type: string
+          maxLength: 200
           example: J. R. R. Tolkien
         isbn:
           type: string
+          maxLength: 20
           example: 978-8578270367
 
     ErrorResponse:
@@ -279,6 +285,17 @@ components:
         details:
           type: array
           items:
-            type: string
+            type: object
+            required:
+              - field
+              - message
+            properties:
+              field:
+                type: string
+                example: title
+              message:
+                type: string
+                example: Invalid input
           example:
-            - 'Título é obrigatório'
+            - field: title
+              message: Invalid input
