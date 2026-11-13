@@ -12,7 +12,7 @@ O fluxo principal da aplicação é:
 4. O repositório persiste as informações em JSON para manter a solução simples e executável sem banco de dados externo.
 5. A API retorna respostas padronizadas em JSON com status HTTP adequados.
 
-## Primeiro dia: como rodar o projeto
+## Romario Alves da Silva - engenharia de software 
 
 ### Requisitos
 
@@ -170,5 +170,5 @@ curl -X POST http://localhost:3000/api/books \
 
 ## Observações finais
 
-A solução foi pensada para ser simples de aprender, fácil de executar e adequada ao nível de um projeto acadêmico ou de treinamento em arquitetura de software. O código foi organizado em camadas com separação clara entre domínio, serviço, persistência e transporte HTTP.
+A solução foi pensada para ser simples de aprender, fácil de executar e adequada ao nível de um projeto de pós graduação acadêmico ou de treinamento em arquitetura de software. No entanto, eu compilei este código que foi organizado em camadas com separação clara entre domínio, serviço, persistência e transporte HTTP.
 
