@@ -1,0 +1,284 @@
+openapi: 3.0.3
+info:
+  title: Biblioteca API
+  version: 1.0.0
+  description: >-
+    API REST para gestão de livros em uma biblioteca, com cadastro, consulta,
+    atualização e remoção, além de verificação de saúde da aplicação.
+servers:
+  - url: http://localhost:3000
+    description: Ambiente local de desenvolvimento
+paths:
+  /health:
+    get:
+      summary: Verifica a saúde da API
+      tags:
+        - Health
+      operationId: healthCheck
+      responses:
+        '200':
+          description: API funcionando corretamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: ok
+
+  /api/books:
+    get:
+      summary: Lista todos os livros
+      tags:
+        - Livros
+      operationId: listBooks
+      responses:
+        '200':
+          description: Lista de livros retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+              example:
+                data:
+                  - id: 3f4ecb81-1cbe-412a-bc1c-c30ef3d0bc53
+                    title: O Hobbit
+                    author: J. R. R. Tolkien
+                    isbn: 978-8595084742
+                    createdAt: '2026-11-13T10:00:00.000Z'
+                    updatedAt: '2026-11-13T10:00:00.000Z'
+    post:
+      summary: Cria um novo livro
+      tags:
+        - Livros
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookInput'
+            example:
+              title: O Hobbit
+              author: J. R. R. Tolkien
+              isbn: 978-8595084742
+      responses:
+        '201':
+          description: Livro criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Book'
+        '400':
+          description: Payload inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ISBN duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/books/{id}:
+    get:
+      summary: Busca um livro por ID
+      tags:
+        - Livros
+      operationId: getBookById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID do livro
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Livro encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Book'
+        '404':
+          description: Livro não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Atualiza parcialmente um livro
+      tags:
+        - Livros
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID do livro
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookInput'
+            example:
+              title: O Senhor dos Anéis
+      responses:
+        '200':
+          description: Livro atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Book'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Livro não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ISBN duplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Remove um livro
+      tags:
+        - Livros
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID do livro
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Livro removido com sucesso
+        '404':
+          description: Livro não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: ok
+
+    Book:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - isbn
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 3f4ecb81-1cbe-412a-bc1c-c30ef3d0bc53
+        title:
+          type: string
+          example: O Hobbit
+        author:
+          type: string
+          example: J. R. R. Tolkien
+        isbn:
+          type: string
+          example: 978-8595084742
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-11-13T10:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-11-13T10:00:00.000Z'
+
+    CreateBookInput:
+      type: object
+      required:
+        - title
+        - author
+        - isbn
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: O Hobbit
+        author:
+          type: string
+          minLength: 1
+          example: J. R. R. Tolkien
+        isbn:
+          type: string
+          minLength: 1
+          example: 978-8595084742
+
+    UpdateBookInput:
+      type: object
+      minProperties: 1
+      properties:
+        title:
+          type: string
+          example: O Senhor dos Anéis
+        author:
+          type: string
+          example: J. R. R. Tolkien
+        isbn:
+          type: string
+          example: 978-8578270367
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Livro não encontrado
+        details:
+          type: array
+          items:
+            type: string
+          example:
+            - 'Título é obrigatório'
